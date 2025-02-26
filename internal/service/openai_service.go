@@ -40,24 +40,46 @@ func (s *OpenAIService) SetAPIKey(apiKey string) {
 	}
 }
 
-// CreateChatCompletion 转发请求到OpenAI
-func (s *OpenAIService) CreateChatCompletion(req *model.OpenAIRequest) (*model.OpenAIResponse, error) {
+// CreateChatCompletion 转发请求到OpenAI并返回简化的响应
+func (s *OpenAIService) CreateChatCompletion(req *model.OpenAIRequest) (*model.SimpleResponse, error) {
 	// 构建OpenAI请求
-	messages := []model.Message{
-		{
+	var messages []model.Message
+
+	// 只有当system不为空时才添加system消息
+	if req.System != "" {
+		messages = append(messages, model.Message{
 			Role:    "system",
 			Content: req.System,
-		},
-		{
-			Role:    "user",
-			Content: req.Content,
-		},
+		})
 	}
 
+	// 添加用户消息
+	messages = append(messages, model.Message{
+		Role:    "user",
+		Content: req.Content,
+	})
+
+	// 创建请求对象
 	chatReq := model.ChatCompletionRequest{
 		Model:    req.Model,
 		Messages: messages,
-		Options:  req.Options,
+	}
+
+	// 根据请求选项设置相应字段
+	if req.Options.Temperature != 0 {
+		chatReq.Temperature = req.Options.Temperature
+	}
+
+	if req.Options.MaxTokens != 0 {
+		chatReq.MaxTokens = req.Options.MaxTokens
+	}
+
+	if req.Options.MaxCompletionTokens != 0 {
+		chatReq.MaxCompletionTokens = req.Options.MaxCompletionTokens
+	}
+
+	if req.Options.ReasoningEffort != 0 {
+		chatReq.ReasoningEffort = req.Options.ReasoningEffort
 	}
 
 	jsonData, err := json.Marshal(chatReq)
@@ -99,11 +121,21 @@ func (s *OpenAIService) CreateChatCompletion(req *model.OpenAIRequest) (*model.O
 		return nil, fmt.Errorf("OpenAI API error: %s, status code: %d", string(body), resp.StatusCode)
 	}
 
-	// 解析响应
+	// 解析完整的OpenAI响应
 	var openAIResp model.OpenAIResponse
 	if err := json.Unmarshal(body, &openAIResp); err != nil {
 		return nil, fmt.Errorf("error unmarshaling response: %w", err)
 	}
 
-	return &openAIResp, nil
+	// 检查是否有有效的选择
+	if len(openAIResp.Choices) == 0 {
+		return nil, fmt.Errorf("no choices returned from OpenAI")
+	}
+
+	// 创建简化的响应，只包含消息内容
+	simpleResp := &model.SimpleResponse{
+		Content: openAIResp.Choices[0].Message.Content,
+	}
+
+	return simpleResp, nil
 }

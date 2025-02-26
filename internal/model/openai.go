@@ -10,15 +10,20 @@ type OpenAIRequest struct {
 
 // RequestOptions 定义了请求选项
 type RequestOptions struct {
-	Temperature float64 `json:"temperature,omitempty"`
-	MaxTokens   int     `json:"max_tokens,omitempty"`
+	Temperature         float64 `json:"temperature,omitempty"`
+	MaxTokens           int     `json:"max_tokens,omitempty"`
+	MaxCompletionTokens int     `json:"max_completion_tokens,omitempty"`
+	ReasoningEffort     float64 `json:"reasoning_effort,omitempty"`
 }
 
 // ChatCompletionRequest 定义了发送给OpenAI的请求结构
 type ChatCompletionRequest struct {
-	Model    string         `json:"model"`
-	Messages []Message      `json:"messages"`
-	Options  RequestOptions `json:"options,omitempty"`
+	Model               string    `json:"model"`
+	Messages            []Message `json:"messages"`
+	Temperature         float64   `json:"temperature,omitempty"`
+	MaxTokens           int       `json:"max_tokens,omitempty"`
+	MaxCompletionTokens int       `json:"max_completion_tokens,omitempty"`
+	ReasoningEffort     float64   `json:"reasoning_effort,omitempty"`
 }
 
 // Message 定义了消息结构
@@ -49,4 +54,9 @@ type Usage struct {
 	PromptTokens     int `json:"prompt_tokens"`
 	CompletionTokens int `json:"completion_tokens"`
 	TotalTokens      int `json:"total_tokens"`
+}
+
+// SimpleResponse 定义了简化后的响应结构，只包含消息内容
+type SimpleResponse struct {
+	Content string `json:"content"`
 }

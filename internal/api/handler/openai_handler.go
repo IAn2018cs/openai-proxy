@@ -47,6 +47,6 @@ func (h *OpenAIHandler) HandleChatCompletion(c *gin.Context) {
 		return
 	}
 
-	// 返回响应
+	// 返回简化的响应
 	c.JSON(http.StatusOK, resp)
 }

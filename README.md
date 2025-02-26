@@ -34,7 +34,7 @@ Authorization: Bearer your-auth-api-key
 Content-Type: application/json
 
 {
-  "model": "gpt-3.5-turbo",
+  "model": "gpt-4o-mini",
   "system": "你是一个有用的助手",
   "content": "你好，请介绍一下自己",
   "options": {
