@@ -60,3 +60,45 @@ X-OpenAI-APIKey: your-custom-openai-api-key
 ```bash
 go run cmd/server/main.go
 ```
+
+## Docker 部署
+
+### 使用 Docker 构建和运行
+
+```bash
+# 构建 Docker 镜像
+docker build -t openai-proxy .
+
+# 运行容器
+docker run -d -p 8080:8080 -v $(pwd)/config:/root/config --name openai-proxy openai-proxy
+```
+
+### 使用 Docker Compose 部署
+```bash
+# 启动服务
+docker-compose up -d
+
+# 查看日志
+docker-compose logs -f
+
+# 停止服务
+docker-compose down
+```
+
+### 配置说明
+
+在使用 Docker 部署时，可以通过挂载配置文件或设置环境变量来配置应用：
+
+1. 挂载配置文件：
+```bash
+docker run -d -p 8080:8080 -v $(pwd)/config:/root/config --name openai-proxy openai-proxy
+```
+2. 使用环境变量（优先级高于配置文件）：
+```bash
+docker run -d -p 8080:8080 \
+  -e OPENAI_BASE_URL=https://api.openai.com \
+  -e OPENAI_API_KEY=your-openai-api-key \
+  -e AUTH_API_KEY=your-auth-api-key \
+  -e SERVER_PORT=8080 \
+  --name openai-proxy openai-proxy
+```

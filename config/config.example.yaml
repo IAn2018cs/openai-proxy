@@ -1,0 +1,9 @@
+server:
+  port: "8080"
+
+openai:
+  base_url: "https://api.openai.com"
+  api_key: "your-openai-api-key"  # 替换为你的OpenAI API密钥
+
+auth:
+  api_key: "your-auth-api-key"  # 替换为你的认证API密钥
